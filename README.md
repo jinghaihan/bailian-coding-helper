@@ -1,18 +1,9 @@
 # bailian-coding-helper
 
 [![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![bundle][bundle-src]][bundle-href]
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
-
-```sh
-degit jinghaihan/starter-cli bailian-coding-helper
-```
-
-## Checklist
-
-- [ ] replace all `bailian-coding-helper` with your cli name
 
 ## Usage
 

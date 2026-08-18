@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@10.33.2",
-  "description": "",
+  "description": "An interactive CLI for setting up Bailian with AI coding agents.",
   "author": "jinghaihan",
   "license": "MIT",
   "homepage": "https://github.com/jinghaihan/bailian-coding-helper#readme",
@@ -14,7 +14,11 @@
   "bugs": {
     "url": "https://github.com/jinghaihan/bailian-coding-helper/issues"
   },
-  "keywords": [],
+  "keywords": [
+    "bailian",
+    "config",
+    "cli"
+  ],
   "exports": {
     ".": "./dist/index.mjs",
     "./cli": "./dist/cli.mjs",
@@ -44,6 +48,7 @@
   "dependencies": {
     "@clack/prompts": "catalog:prod",
     "ansis": "catalog:prod",
+    "bailian-cli": "catalog:prod",
     "cac": "catalog:prod",
     "pathe": "catalog:prod"
   },
