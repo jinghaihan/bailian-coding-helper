@@ -3,8 +3,14 @@ import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { runBailianConfig } from './adapter'
-import { ACCESS_MODES, DEFAULT_MODEL, VERSION } from './constants'
-import { getOfficialAgentIds, getSuggestedModels } from './official'
+import {
+  ACCESS_MODES,
+  DEFAULT_MODEL,
+  TOKEN_PLAN_MODEL_DOCS_URL,
+  TOKEN_PLAN_MODELS,
+  VERSION,
+} from './constants'
+import { getOfficialAgentIds } from './official'
 import {
   formatAgentLabel,
   getCodingPlanBaseUrl,
@@ -39,14 +45,15 @@ async function resolveAgent(): Promise<AgentId | undefined> {
 }
 
 async function resolveModel(): Promise<string | undefined> {
-  const models = getSuggestedModels(DEFAULT_MODEL)
+  p.log.info(`${c.bold('Official model list:')} ${c.underline.cyan(TOKEN_PLAN_MODEL_DOCS_URL)}`)
+
   const selected = await prompt(p.select<string>({
     message: 'Model',
     options: [
-      ...models.map(model => ({
-        value: model,
-        label: model,
-        hint: model === DEFAULT_MODEL ? 'Recommended' : 'Official CLI example',
+      ...TOKEN_PLAN_MODELS.map(model => ({
+        value: model.value,
+        label: model.value,
+        hint: model.hint,
       })),
       { value: CUSTOM_MODEL, label: 'Other model', hint: 'Enter a model ID' },
     ],
