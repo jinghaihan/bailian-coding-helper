@@ -16,6 +16,7 @@ import {
   getCodingPlanBaseUrl,
   getPayAsYouGoBaseUrl,
   normalizeBaseUrl,
+  parseBailianConfigOutput,
   validateUrl,
 } from './utils'
 
@@ -189,7 +190,19 @@ export async function runWizard(): Promise<void> {
   }
 
   p.log.step(`Configuring ${agentLabel}`)
-  await runBailianConfig(config)
+  const output = await runBailianConfig(config)
+  const details = parseBailianConfigOutput(output)
+
+  if (details.length > 0) {
+    p.note(details.map((line) => {
+      if (line.startsWith('Written:'))
+        return `${c.dim('Written:')} ${c.cyan(line.slice('Written:'.length).trim())}`
+      if (line.startsWith('Warning:'))
+        return `${c.yellow('Warning:')} ${line.slice('Warning:'.length).trim()}`
+      return line
+    }).join('\n'), 'Bailian CLI')
+  }
+
   p.log.success(`${agentLabel} configured`)
   p.outro(`Done. Open ${agentLabel} to start coding.`)
 }

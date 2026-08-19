@@ -1,4 +1,5 @@
 import type { AgentId, Protocol, Region } from './types'
+import c from 'ansis'
 import { CODING_PLAN_BASE_URLS, PAY_AS_YOU_GO_BASE_URLS } from './constants'
 
 const AGENT_LABELS: Record<string, string> = {
@@ -43,4 +44,11 @@ export function normalizeBaseUrl(value: string): string {
 export function formatAgentLabel(agent: AgentId): string {
   return AGENT_LABELS[agent]
     ?? agent.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
+export function parseBailianConfigOutput(output: string): string[] {
+  return c.strip(output)
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line && !line.endsWith(' configured successfully.'))
 }
