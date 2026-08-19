@@ -1,6 +1,10 @@
 import type { AgentId, Protocol, Region } from './types'
 import c from 'ansis'
-import { CODING_PLAN_BASE_URLS, PAY_AS_YOU_GO_BASE_URLS } from './constants'
+import {
+  CODING_PLAN_BASE_URLS,
+  PAY_AS_YOU_GO_BASE_URLS,
+  TOKEN_PLAN_MODELS,
+} from './constants'
 
 const AGENT_LABELS: Record<string, string> = {
   'claude-code': 'Claude Code',
@@ -51,4 +55,33 @@ export function parseBailianConfigOutput(output: string): string[] {
     .split(/\r?\n/)
     .map(line => line.trim())
     .filter(line => line && !line.endsWith(' configured successfully.'))
+}
+
+export function getModelContextWindow(model: string): number | undefined {
+  return TOKEN_PLAN_MODELS.find(item => item.value === model)?.contextWindow
+}
+
+export function formatContextWindow(value: number): string {
+  if (value % 1_000_000 === 0)
+    return `${value / 1_000_000}M`
+  if (value % 1_000 === 0)
+    return `${value / 1_000}K`
+  return value.toLocaleString('en-US')
+}
+
+export function parseContextWindow(value: string | undefined): number | undefined {
+  const match = value?.trim().match(/^(\d+(?:\.\d+)?)\s*([km])?$/i)
+  if (!match)
+    return undefined
+
+  const amount = Number(match[1])
+  const unit = match[2]?.toLowerCase()
+  const multiplier = unit === 'm' ? 1_000_000 : unit === 'k' ? 1_000 : 1
+  const result = amount * multiplier
+
+  return Number.isSafeInteger(result) && result > 0 ? result : undefined
+}
+
+export function validateContextWindow(value: string | undefined): string | undefined {
+  return parseContextWindow(value) ? undefined : 'Enter a positive token count, such as 256K or 1M.'
 }

@@ -40,6 +40,17 @@ export const AGENT_CONTEXT_WINDOW_SUPPORT = {
 
 export const CLAUDE_CODE_EXTENDED_CONTEXT_WINDOW = 1_000_000
 
+export const CLAUDE_CODE_EXTENDED_CONTEXT_MODELS = [
+  'glm-5.2',
+  'qwen3.8-max-preview',
+  'qwen3.7-max',
+  'qwen3.7-plus',
+  'qwen3.6-plus',
+  'qwen3.6-flash',
+  'deepseek-v4-pro',
+  'deepseek-v4-flash',
+] as const
+
 export const ACCESS_MODES = [
   {
     value: 'coding-plan',

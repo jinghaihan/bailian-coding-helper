@@ -5,6 +5,9 @@ import c from 'ansis'
 import { runBailianConfig } from './adapter'
 import {
   ACCESS_MODES,
+  AGENT_CONTEXT_WINDOW_SUPPORT,
+  CLAUDE_CODE_EXTENDED_CONTEXT_MODELS,
+  CLAUDE_CODE_EXTENDED_CONTEXT_WINDOW,
   DEFAULT_MODEL,
   TOKEN_PLAN_MODEL_DOCS_URL,
   TOKEN_PLAN_MODELS,
@@ -13,14 +16,22 @@ import {
 import { getOfficialAgentIds } from './official'
 import {
   formatAgentLabel,
+  formatContextWindow,
   getCodingPlanBaseUrl,
+  getModelContextWindow,
   getPayAsYouGoBaseUrl,
   normalizeBaseUrl,
   parseBailianConfigOutput,
+  parseContextWindow,
+  validateContextWindow,
   validateUrl,
 } from './utils'
 
 const CUSTOM_MODEL = '__custom__'
+const CUSTOM_CONTEXT_WINDOW = '__custom__'
+const DEFAULT_CONTEXT_WINDOW = '__default__'
+const EXTENDED_CONTEXT_WINDOW = '__extended__'
+const MODEL_CONTEXT_WINDOW = '__model__'
 
 async function prompt<T>(value: Promise<T | symbol>): Promise<T | undefined> {
   const result = await value
@@ -54,7 +65,7 @@ async function resolveModel(): Promise<string | undefined> {
       ...TOKEN_PLAN_MODELS.map(model => ({
         value: model.value,
         label: model.value,
-        hint: model.hint,
+        hint: `${model.hint} · ${formatContextWindow(model.contextWindow)} context`,
       })),
       { value: CUSTOM_MODEL, label: 'Other model', hint: 'Enter a model ID' },
     ],
@@ -68,6 +79,78 @@ async function resolveModel(): Promise<string | undefined> {
     placeholder: DEFAULT_MODEL,
     validate: value => value?.trim() ? undefined : 'Enter a model ID.',
   }))
+}
+
+async function resolveContextWindow(
+  agent: AgentId,
+  model: string,
+): Promise<number | null | undefined> {
+  if (agent !== 'claude-code' && agent !== 'openclaw')
+    return null
+
+  const support = AGENT_CONTEXT_WINDOW_SUPPORT[agent]
+  const modelContextWindow = getModelContextWindow(model)
+  const usesExtendedContext = agent === 'claude-code'
+    && (
+      model.endsWith('[1m]')
+      || (CLAUDE_CODE_EXTENDED_CONTEXT_MODELS as readonly string[]).includes(model)
+    )
+  const recommendedContextWindow = usesExtendedContext
+    ? CLAUDE_CODE_EXTENDED_CONTEXT_WINDOW
+    : modelContextWindow
+  const options: Array<{ value: string, label: string, hint: string }> = []
+
+  if (recommendedContextWindow) {
+    options.push({
+      value: MODEL_CONTEXT_WINDOW,
+      label: formatContextWindow(recommendedContextWindow),
+      hint: 'Recommended · Model maximum',
+    })
+  }
+
+  if (support.defaultValue !== recommendedContextWindow) {
+    options.push({
+      value: DEFAULT_CONTEXT_WINDOW,
+      label: formatContextWindow(support.defaultValue),
+      hint: `${formatAgentLabel(agent)} default`,
+    })
+  }
+
+  if (agent === 'claude-code' && !usesExtendedContext) {
+    options.push({
+      value: EXTENDED_CONTEXT_WINDOW,
+      label: '1M',
+      hint: 'Use only if the model supports extended context',
+    })
+  }
+
+  options.push({
+    value: CUSTOM_CONTEXT_WINDOW,
+    label: 'Other',
+    hint: 'Enter a token count',
+  })
+
+  const selected = await prompt(p.select<string>({
+    message: 'Context window',
+    options,
+  }))
+
+  if (!selected)
+    return undefined
+  if (selected === MODEL_CONTEXT_WINDOW)
+    return recommendedContextWindow
+  if (selected === DEFAULT_CONTEXT_WINDOW)
+    return support.defaultValue
+  if (selected === EXTENDED_CONTEXT_WINDOW)
+    return CLAUDE_CODE_EXTENDED_CONTEXT_WINDOW
+
+  const custom = await prompt(p.text({
+    message: 'Context window tokens',
+    placeholder: String(recommendedContextWindow ?? support.defaultValue),
+    validate: validateContextWindow,
+  }))
+
+  return custom ? parseContextWindow(custom) : undefined
 }
 
 async function resolveEndpoint(
@@ -161,15 +244,25 @@ export async function runWizard(): Promise<void> {
   if (!model)
     return
 
+  const contextWindow = await resolveContextWindow(agent, model.trim())
+  if (contextWindow === undefined)
+    return
+
   const agentLabel = formatAgentLabel(agent)
   const accessLabel = ACCESS_MODES.find(item => item.value === accessMode)?.label ?? accessMode
 
-  p.note([
+  const configuration = [
     `${c.dim('Agent:')}    ${c.cyan(agentLabel)}`,
     `${c.dim('Access:')}   ${c.cyan(accessLabel)}`,
     `${c.dim('Endpoint:')} ${c.cyan(endpoint.value)}`,
     `${c.dim('Model:')}    ${c.yellow(model.trim())}`,
-  ].join('\n'), 'Configuration')
+  ]
+  if (contextWindow !== null) {
+    configuration.push(
+      `${c.dim('Context:')}  ${c.yellow(formatContextWindow(contextWindow))}`,
+    )
+  }
+  p.note(configuration.join('\n'), 'Configuration')
 
   const confirmed = await prompt(p.confirm({
     message: `Configure ${c.cyan(agentLabel)} with ${c.yellow('Bailian')}?`,
@@ -184,6 +277,7 @@ export async function runWizard(): Promise<void> {
 
   const config: BailianAgentConfig = {
     agent,
+    contextWindow: contextWindow ?? undefined,
     endpoint,
     key,
     model: model.trim(),

@@ -18,6 +18,7 @@ export type Endpoint
 
 export interface BailianAgentConfig {
   agent: AgentId
+  contextWindow?: number
   endpoint: Endpoint
   key: string
   model: string
