@@ -32,6 +32,9 @@
     "bin",
     "dist"
   ],
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "start": "tsx ./src/cli.ts",
     "build": "tsdown",
