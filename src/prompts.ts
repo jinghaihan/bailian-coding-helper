@@ -204,5 +204,5 @@ export async function runWizard(): Promise<void> {
   }
 
   p.log.success(`${agentLabel} configured`)
-  p.outro(`Done. Open ${agentLabel} to start coding.`)
+  p.outro(`Done. Open ${c.cyan(agentLabel)} to start coding.`)
 }
