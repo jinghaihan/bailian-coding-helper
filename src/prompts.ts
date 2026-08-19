@@ -157,14 +157,14 @@ export async function runWizard(): Promise<void> {
   const accessLabel = ACCESS_MODES.find(item => item.value === accessMode)?.label ?? accessMode
 
   p.note([
-    `Agent:    ${agentLabel}`,
-    `Access:   ${accessLabel}`,
-    `Endpoint: ${endpoint.value}`,
-    `Model:    ${model.trim()}`,
+    `${c.dim('Agent:')}    ${c.cyan(agentLabel)}`,
+    `${c.dim('Access:')}   ${c.cyan(accessLabel)}`,
+    `${c.dim('Endpoint:')} ${c.cyan(endpoint.value)}`,
+    `${c.dim('Model:')}    ${c.yellow(model.trim())}`,
   ].join('\n'), 'Configuration')
 
   const confirmed = await prompt(p.confirm({
-    message: `Configure ${agentLabel} with Bailian?`,
+    message: `Configure ${c.cyan(agentLabel)} with ${c.yellow('Bailian')}?`,
     initialValue: true,
   }))
   if (confirmed === undefined)
