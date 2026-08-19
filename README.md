@@ -15,7 +15,7 @@ It provides a prompt-based interface powered by the official [`bailian-cli`](htt
 npx bailian-coding-helper@latest
 ```
 
-The wizard asks for your coding agent, Bailian access plan, API key, and model. API keys are hidden during input and omitted from the configuration summary. Supported agents and model suggestions are read from the installed official command package.
+The wizard asks for your coding agent, Bailian access plan, API key, and model. API keys are hidden during input and omitted from the configuration summary. Supported agents are read from the installed official command package.
 
 Supported access modes:
 
@@ -33,7 +33,7 @@ Supported agents:
 - OpenClaw
 - Hermes Agent
 
-The recommended model is `glm-5.2`. You can also choose a model from the official CLI examples or enter another model ID.
+The model picker contains the text-generation models from the [Token Plan Team model catalog](https://help.aliyun.com/zh/model-studio/token-plan-team-overview), with `glm-5.2` as the recommended default. The wizard displays that documentation link and always provides an **Other model** option, so you can enter a newly released model before this package updates its maintained catalog.
 
 ## How it works
 
