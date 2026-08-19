@@ -48,6 +48,9 @@ catalogs:
     bailian-cli:
       specifier: ^1.17.0
       version: 1.17.0
+    bailian-cli-commands:
+      specifier: ^1.17.0
+      version: 1.17.0
     cac:
       specifier: ^7.0.0
       version: 7.0.0
@@ -77,6 +80,9 @@ importers:
         specifier: catalog:prod
         version: 4.2.0
       bailian-cli:
+        specifier: catalog:prod
+        version: 1.17.0
+      bailian-cli-commands:
         specifier: catalog:prod
         version: 1.17.0
       cac:
