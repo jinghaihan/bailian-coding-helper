@@ -79,6 +79,11 @@ export const CODING_PLAN_BASE_URLS = {
   openai: 'https://coding.dashscope.aliyuncs.com/v1',
 } as const
 
+export const TOKEN_PLAN_BASE_URLS = {
+  anthropic: 'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+  openai: 'https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1',
+} as const
+
 export const PAY_AS_YOU_GO_BASE_URLS = {
   'cn-beijing': {
     anthropic: 'https://dashscope.aliyuncs.com/apps/anthropic',

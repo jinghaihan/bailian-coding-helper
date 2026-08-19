@@ -20,6 +20,7 @@ import {
   getCodingPlanBaseUrl,
   getModelContextWindow,
   getPayAsYouGoBaseUrl,
+  getTokenPlanBaseUrl,
   normalizeBaseUrl,
   parseBailianConfigOutput,
   parseContextWindow,
@@ -160,17 +161,8 @@ async function resolveEndpoint(
   if (accessMode === 'coding-plan')
     return { type: 'base-url', value: getCodingPlanBaseUrl(agent) }
 
-  if (accessMode === 'token-plan') {
-    const region = await prompt(p.select<Region>({
-      message: 'Token Plan region',
-      options: [
-        { value: 'cn-beijing', label: 'China (Beijing)' },
-        { value: 'ap-southeast-1', label: 'International (Singapore)' },
-      ],
-    }))
-
-    return region ? { type: 'region', value: region } : undefined
-  }
+  if (accessMode === 'token-plan')
+    return { type: 'base-url', value: getTokenPlanBaseUrl(agent) }
 
   if (accessMode === 'pay-as-you-go') {
     const region = await prompt(p.select<Region>({

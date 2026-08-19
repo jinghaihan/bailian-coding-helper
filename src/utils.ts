@@ -3,6 +3,7 @@ import c from 'ansis'
 import {
   CODING_PLAN_BASE_URLS,
   PAY_AS_YOU_GO_BASE_URLS,
+  TOKEN_PLAN_BASE_URLS,
   TOKEN_PLAN_MODELS,
 } from './constants'
 
@@ -35,6 +36,10 @@ export function getProtocol(agent: AgentId): Protocol {
 
 export function getCodingPlanBaseUrl(agent: AgentId): string {
   return CODING_PLAN_BASE_URLS[getProtocol(agent)]
+}
+
+export function getTokenPlanBaseUrl(agent: AgentId): string {
+  return TOKEN_PLAN_BASE_URLS[getProtocol(agent)]
 }
 
 export function getPayAsYouGoBaseUrl(region: Region, agent: AgentId): string {
