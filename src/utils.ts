@@ -1,6 +1,15 @@
 import type { AgentId, Protocol, Region } from './types'
 import { CODING_PLAN_BASE_URLS, PAY_AS_YOU_GO_BASE_URLS } from './constants'
 
+const AGENT_LABELS: Record<string, string> = {
+  'claude-code': 'Claude Code',
+  'codex': 'Codex',
+  'hermes': 'Hermes Agent',
+  'opencode': 'OpenCode',
+  'openclaw': 'OpenClaw',
+  'qwen-code': 'Qwen Code',
+}
+
 export function validateUrl(value: string | undefined): string | undefined {
   if (!value?.trim())
     return 'Enter a Base URL.'
@@ -29,4 +38,9 @@ export function getPayAsYouGoBaseUrl(region: Region, agent: AgentId): string {
 
 export function normalizeBaseUrl(value: string): string {
   return value.trim().replace(/\/$/, '')
+}
+
+export function formatAgentLabel(agent: AgentId): string {
+  return AGENT_LABELS[agent]
+    ?? agent.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }

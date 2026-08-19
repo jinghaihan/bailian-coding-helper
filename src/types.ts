@@ -1,13 +1,10 @@
 import type {
   ACCESS_MODES,
-  AGENTS,
   CODING_PLAN_BASE_URLS,
   PAY_AS_YOU_GO_BASE_URLS,
 } from './constants'
 
-export type KnownAgentId = (typeof AGENTS)[number]['value']
-
-export type AgentId = KnownAgentId | (string & {})
+export type AgentId = string
 
 export type AccessMode = (typeof ACCESS_MODES)[number]['value']
 

@@ -3,15 +3,17 @@ import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { redact, runBailianConfig } from './bailian'
-import { ACCESS_MODES, AGENTS, DEFAULT_MODEL, VERSION } from './constants'
+import { ACCESS_MODES, DEFAULT_MODEL, VERSION } from './constants'
+import { getOfficialAgentIds, getSuggestedModels } from './official'
 import {
+  formatAgentLabel,
   getCodingPlanBaseUrl,
   getPayAsYouGoBaseUrl,
   normalizeBaseUrl,
   validateUrl,
 } from './utils'
 
-const CUSTOM_AGENT = '__custom__'
+const CUSTOM_MODEL = '__custom__'
 
 async function prompt<T>(value: Promise<T | symbol>): Promise<T | undefined> {
   const result = await value
@@ -25,24 +27,38 @@ async function prompt<T>(value: Promise<T | symbol>): Promise<T | undefined> {
 }
 
 async function resolveAgent(): Promise<AgentId | undefined> {
-  const selected = await prompt(p.select<string>({
+  const agents = getOfficialAgentIds()
+
+  return await prompt(p.select<string>({
     message: 'Which coding agent do you want to configure?',
+    options: agents.map(agent => ({
+      value: agent,
+      label: formatAgentLabel(agent),
+    })),
+  }))
+}
+
+async function resolveModel(): Promise<string | undefined> {
+  const models = getSuggestedModels(DEFAULT_MODEL)
+  const selected = await prompt(p.select<string>({
+    message: 'Model',
     options: [
-      ...AGENTS,
-      { value: CUSTOM_AGENT, label: 'Other', hint: 'Enter an agent ID supported by Bailian CLI' },
+      ...models.map(model => ({
+        value: model,
+        label: model,
+        hint: model === DEFAULT_MODEL ? 'Recommended' : 'Official CLI example',
+      })),
+      { value: CUSTOM_MODEL, label: 'Other model', hint: 'Enter a model ID' },
     ],
   }))
 
-  if (!selected)
-    return undefined
-
-  if (selected !== CUSTOM_AGENT)
+  if (!selected || selected !== CUSTOM_MODEL)
     return selected
 
   return await prompt(p.text({
-    message: 'Agent ID',
-    placeholder: 'agent-name',
-    validate: value => value?.trim() ? undefined : 'Enter an agent ID.',
+    message: 'Model ID',
+    placeholder: DEFAULT_MODEL,
+    validate: value => value?.trim() ? undefined : 'Enter a model ID.',
   }))
 }
 
@@ -133,15 +149,11 @@ export async function runWizard(): Promise<void> {
   if (!key)
     return
 
-  const model = await prompt(p.text({
-    message: 'Model',
-    initialValue: DEFAULT_MODEL,
-    validate: value => value?.trim() ? undefined : 'Enter a model name.',
-  }))
+  const model = await resolveModel()
   if (!model)
     return
 
-  const agentLabel = AGENTS.find(item => item.value === agent)?.label ?? agent
+  const agentLabel = formatAgentLabel(agent)
   const accessLabel = ACCESS_MODES.find(item => item.value === accessMode)?.label ?? accessMode
 
   p.note([

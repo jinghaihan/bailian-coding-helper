@@ -6,15 +6,6 @@ export const VERSION = pkg.version
 
 export const DEFAULT_MODEL = 'glm-5.2'
 
-export const AGENTS = [
-  { value: 'claude-code', label: 'Claude Code' },
-  { value: 'qwen-code', label: 'Qwen Code' },
-  { value: 'codex', label: 'Codex' },
-  { value: 'opencode', label: 'OpenCode' },
-  { value: 'openclaw', label: 'OpenClaw' },
-  { value: 'hermes', label: 'Hermes Agent' },
-] as const
-
 export const ACCESS_MODES = [
   {
     value: 'coding-plan',
