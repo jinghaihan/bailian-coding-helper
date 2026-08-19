@@ -7,7 +7,7 @@
 
 An interactive CLI for setting up Alibaba Cloud Bailian with AI coding agents.
 
-It provides a prompt-based interface and delegates configuration writes to the official [`bailian-cli`](https://github.com/modelstudioai/cli).
+It provides a prompt-based interface powered by the official [`bailian-cli`](https://github.com/modelstudioai/cli) command metadata and runtime.
 
 ## Usage
 
@@ -15,7 +15,7 @@ It provides a prompt-based interface and delegates configuration writes to the o
 npx bailian-coding-helper@latest
 ```
 
-The wizard asks for your coding agent, Bailian access plan, API key, and model. API keys are hidden during input and omitted from the configuration summary.
+The wizard asks for your coding agent, Bailian access plan, API key, and model. API keys are hidden during input and omitted from the configuration summary. Supported agents and model suggestions are read from the installed official command package.
 
 Supported access modes:
 
@@ -33,17 +33,17 @@ Supported agents:
 - OpenClaw
 - Hermes Agent
 
-Select `Other` to pass an agent ID supported by a newer version of the official CLI.
+The recommended model is `glm-5.2`. You can also choose a model from the official CLI examples or enter another model ID.
 
 ## How it works
 
-The answers are translated into an official command equivalent to:
+The selected values are passed to the official `configAgent` command through `bailian-cli-runtime`, equivalent to:
 
 ```bash
 bl config agent --agent <agent> --base-url <url> --api-key <key> --model <model>
 ```
 
-Agent-specific configuration files, merging, and backups remain the responsibility of `bailian-cli`.
+Agent-specific configuration files, merging, and backups remain the responsibility of the official command implementation.
 
 ## License
 
