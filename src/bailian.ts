@@ -1,8 +1,7 @@
-import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import type { BailianAgentConfig, BailianCliResult } from './types'
-import { spawn } from 'node:child_process'
 import { createRequire } from 'node:module'
 import process from 'node:process'
+import { x } from 'tinyexec'
 
 export function buildBailianArgs(config: BailianAgentConfig): string[] {
   const keyFlag = config.key.startsWith('o1_') ? '--key' : '--api-key'
@@ -32,29 +31,20 @@ export async function runBailianConfig(
   entry = resolveBailianCliEntry(),
 ): Promise<BailianCliResult> {
   const args = buildBailianArgs(config)
-
-  return await new Promise((resolve, reject) => {
-    const child: ChildProcessWithoutNullStreams = spawn(process.execPath, [entry, ...args], {
+  const result = await x(process.execPath, [entry, ...args], {
+    nodePath: false,
+    nodeOptions: {
       env: process.env,
       shell: false,
-      stdio: ['pipe', 'pipe', 'pipe'],
       windowsHide: true,
-    })
-
-    let stdout = ''
-    let stderr = ''
-
-    child.stdout.setEncoding('utf8')
-    child.stderr.setEncoding('utf8')
-    child.stdout.on('data', chunk => stdout += chunk)
-    child.stderr.on('data', chunk => stderr += chunk)
-    child.once('error', reject)
-    child.once('close', code => resolve({
-      exitCode: code ?? 1,
-      stdout,
-      stderr,
-    }))
+    },
   })
+
+  return {
+    exitCode: result.exitCode ?? 1,
+    stdout: result.stdout,
+    stderr: result.stderr,
+  }
 }
 
 export function redact(value: string, secret: string): string {
