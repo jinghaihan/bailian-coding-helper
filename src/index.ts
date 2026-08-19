@@ -1,2 +1,2 @@
-export { buildBailianArgs, resolveBailianCliEntry, runBailianConfig } from './bailian'
+export { buildBailianArgs, runBailianConfig } from './adapter'
 export * from './types'

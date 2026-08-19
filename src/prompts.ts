@@ -2,7 +2,7 @@ import type { AccessMode, AgentId, BailianAgentConfig, Endpoint, Region } from '
 import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
-import { redact, runBailianConfig } from './bailian'
+import { runBailianConfig } from './adapter'
 import { ACCESS_MODES, DEFAULT_MODEL, VERSION } from './constants'
 import { getOfficialAgentIds, getSuggestedModels } from './official'
 import {
@@ -181,20 +181,8 @@ export async function runWizard(): Promise<void> {
     model: model.trim(),
   }
 
-  const spinner = p.spinner()
-  spinner.start(`Configuring ${agentLabel}`)
-
-  const result = await runBailianConfig(config)
-
-  if (result.exitCode !== 0) {
-    spinner.stop(`Could not configure ${agentLabel}`)
-    const output = redact(result.stderr || result.stdout, key).trim()
-    if (output)
-      p.log.error(output)
-    process.exitCode = result.exitCode
-    return
-  }
-
-  spinner.stop(`${agentLabel} configured`)
+  p.log.step(`Configuring ${agentLabel}`)
+  await runBailianConfig(config)
+  p.log.success(`${agentLabel} configured`)
   p.outro(`Done. Open ${agentLabel} to start coding.`)
 }

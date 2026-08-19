@@ -45,10 +45,10 @@ catalogs:
     ansis:
       specifier: ^4.2.0
       version: 4.2.0
-    bailian-cli:
+    bailian-cli-commands:
       specifier: ^1.17.0
       version: 1.17.0
-    bailian-cli-commands:
+    bailian-cli-runtime:
       specifier: ^1.17.0
       version: 1.17.0
     cac:
@@ -57,9 +57,6 @@ catalogs:
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
-    tinyexec:
-      specifier: ^1.3.0
-      version: 1.3.0
   test:
     vitest:
       specifier: ^4.1.5
@@ -79,10 +76,10 @@ importers:
       ansis:
         specifier: catalog:prod
         version: 4.2.0
-      bailian-cli:
+      bailian-cli-commands:
         specifier: catalog:prod
         version: 1.17.0
-      bailian-cli-commands:
+      bailian-cli-runtime:
         specifier: catalog:prod
         version: 1.17.0
       cac:
@@ -91,9 +88,6 @@ importers:
       pathe:
         specifier: catalog:prod
         version: 2.0.3
-      tinyexec:
-        specifier: catalog:prod
-        version: 1.3.0
     devDependencies:
       '@octohash/eslint-config':
         specifier: catalog:lint
@@ -1183,11 +1177,6 @@ packages:
   bailian-cli-runtime@1.17.0:
     resolution: {integrity: sha512-uCd8HFZ7bpIJslO5wzO5N+FvUmvp2wefECaHisiyCaNDl24LcceSumdvNpEYfC+hEeqYDhljd5NY3zaTetkbdg==}
     engines: {node: '>=18.17.0'}
-
-  bailian-cli@1.17.0:
-    resolution: {integrity: sha512-3FNCaR/Ha32VTZoIqgCQZ5L3oKOuIWBD7koU4T6i9ByZ7OqadZRwQvk+pp+JG+krS2HsXtgW2wzyewO6e7GcEA==}
-    engines: {node: '>=18.17.0'}
-    hasBin: true
 
   balanced-match@4.0.2:
     resolution: {integrity: sha512-x0K50QvKQ97fdEz2kPehIerj+YTeptKF9hyYkKf6egnwmMWAkADiO0QCzSp0R5xN8FTZgYaBfSaue46Ej62nMg==}
@@ -3583,17 +3572,6 @@ snapshots:
       boxen: 8.0.1
       chalk: 5.6.2
       undici: 6.28.0
-    transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
-
-  bailian-cli@1.17.0:
-    dependencies:
-      bailian-cli-commands: 1.17.0
-      bailian-cli-core: 1.17.0
-      bailian-cli-runtime: 1.17.0
-      tar-stream: 3.2.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer

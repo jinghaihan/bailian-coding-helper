@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildBailianArgs, redact, resolveBailianCliEntry } from '../src/bailian'
+import { buildBailianArgs } from '../src/adapter'
 
 describe('buildBailianArgs', () => {
   it('builds arguments for a standard API key and Base URL', () => {
@@ -7,7 +7,7 @@ describe('buildBailianArgs', () => {
       agent: 'codex',
       endpoint: { type: 'base-url', value: 'https://example.com/v1' },
       key: 'sk-example',
-      model: 'qwen3.7-plus',
+      model: 'glm-5.2',
     })).toEqual([
       'config',
       'agent',
@@ -18,7 +18,7 @@ describe('buildBailianArgs', () => {
       '--api-key',
       'sk-example',
       '--model',
-      'qwen3.7-plus',
+      'glm-5.2',
     ])
   })
 
@@ -27,7 +27,7 @@ describe('buildBailianArgs', () => {
       agent: 'claude-code',
       endpoint: { type: 'region', value: 'cn-beijing' },
       key: 'o1_example',
-      model: 'qwen3.7-plus',
+      model: 'glm-5.2',
     })).toEqual([
       'config',
       'agent',
@@ -38,20 +38,7 @@ describe('buildBailianArgs', () => {
       '--key',
       'o1_example',
       '--model',
-      'qwen3.7-plus',
+      'glm-5.2',
     ])
-  })
-})
-
-describe('resolveBailianCliEntry', () => {
-  it('resolves the CLI from the installed dependency', () => {
-    expect(resolveBailianCliEntry()).toMatch(/bailian-cli.+bailian\.mjs$/)
-  })
-})
-
-describe('redact', () => {
-  it('redacts every occurrence of a secret', () => {
-    expect(redact('Invalid sk-secret: sk-secret', 'sk-secret'))
-      .toBe('Invalid [redacted]: [redacted]')
   })
 })

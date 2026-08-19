@@ -22,9 +22,3 @@ export interface BailianAgentConfig {
   key: string
   model: string
 }
-
-export interface BailianCliResult {
-  exitCode: number
-  stdout: string
-  stderr: string
-}
