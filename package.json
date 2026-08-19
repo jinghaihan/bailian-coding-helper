@@ -33,7 +33,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=22"
   },
   "scripts": {
     "start": "tsx ./src/cli.ts",
