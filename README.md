@@ -33,7 +33,9 @@ Supported agents:
 - OpenClaw
 - Hermes Agent
 
-The model picker contains the text-generation models from the [Token Plan Team model catalog](https://help.aliyun.com/zh/model-studio/token-plan-team-overview), with `glm-5.2` as the recommended default. The wizard displays that documentation link and always provides an **Other model** option, so you can enter a newly released model before this package updates its maintained catalog.
+The model picker contains the text-generation models from the [Token Plan Team model catalog](https://help.aliyun.com/zh/model-studio/token-plan-team-overview), with `glm-5.2` as the recommended default. Each maintained model includes its official context window. The wizard displays that documentation link and always provides an **Other model** option, so you can enter a newly released model before this package updates its maintained catalog.
+
+Claude Code and OpenClaw also receive a context-window prompt with the selected model's known limit as the default. Claude Code is configured with its context environment setting and the `[1m]` model suffix for extended-context models. OpenClaw uses the official `--context-window` flag. Other agents are not prompted until their configuration format is explicitly supported.
 
 ## How it works
 
