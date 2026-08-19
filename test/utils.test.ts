@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   formatContextWindow,
   getModelContextWindow,
+  getTokenPlanBaseUrl,
   parseBailianConfigOutput,
   parseContextWindow,
   validateContextWindow,
@@ -36,5 +37,14 @@ describe('parse bailian config output', () => {
     expect(parseContextWindow('-1')).toBeUndefined()
     expect(validateContextWindow('1.5M')).toBeUndefined()
     expect(validateContextWindow('many')).toBeTruthy()
+  })
+
+  it('selects the Token Plan endpoint for the agent protocol', () => {
+    expect(getTokenPlanBaseUrl('claude-code')).toBe(
+      'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+    )
+    expect(getTokenPlanBaseUrl('codex')).toBe(
+      'https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1',
+    )
   })
 })
