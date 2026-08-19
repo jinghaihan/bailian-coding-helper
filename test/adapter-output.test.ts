@@ -1,3 +1,6 @@
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import process from 'node:process'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -35,5 +38,40 @@ describe('run bailian config', () => {
     ].join('\n'))
     expect(process.stdout.write).toBe(stdoutWrite)
     expect(process.stderr.write).toBe(stderrWrite)
+  })
+
+  it('writes the selected Claude Code context window to settings', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'bailian-helper-'))
+    const settingsPath = join(directory, 'settings.json')
+    const previousConfigDirectory = process.env.CLAUDE_CONFIG_DIR
+    process.env.CLAUDE_CONFIG_DIR = directory
+    writeFileSync(settingsPath, JSON.stringify({ env: { EXISTING_VALUE: 'kept' } }))
+
+    try {
+      await runBailianConfig({
+        agent: 'claude-code',
+        contextWindow: 1_000_000,
+        endpoint: { type: 'region', value: 'cn-beijing' },
+        key: 'sk-example',
+        model: 'glm-5.2',
+      })
+
+      const settings = JSON.parse(readFileSync(settingsPath, 'utf8'))
+      expect(settings.env).toMatchObject({
+        CLAUDE_CODE_MAX_CONTEXT_TOKENS: '1000000',
+        EXISTING_VALUE: 'kept',
+      })
+      expect(run).toHaveBeenCalledWith(expect.arrayContaining([
+        '--model',
+        'glm-5.2[1m]',
+      ]))
+    }
+    finally {
+      if (previousConfigDirectory === undefined)
+        delete process.env.CLAUDE_CONFIG_DIR
+      else
+        process.env.CLAUDE_CONFIG_DIR = previousConfigDirectory
+      rmSync(directory, { recursive: true, force: true })
+    }
   })
 })

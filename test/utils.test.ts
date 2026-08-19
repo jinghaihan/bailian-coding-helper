@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { parseBailianConfigOutput } from '../src/utils'
+import {
+  formatContextWindow,
+  getModelContextWindow,
+  parseBailianConfigOutput,
+  parseContextWindow,
+  validateContextWindow,
+} from '../src/utils'
 
 describe('parse bailian config output', () => {
   it('keeps useful details and removes the duplicated success message', () => {
@@ -14,5 +20,21 @@ describe('parse bailian config output', () => {
       'Run `claude` to start using Claude Code with DashScope.',
       'Warning: Rewrote base URL for Claude Code.',
     ])
+  })
+
+  it('looks up and formats maintained context windows', () => {
+    expect(getModelContextWindow('glm-5.2')).toBe(1_048_576)
+    expect(getModelContextWindow('unknown-model')).toBeUndefined()
+    expect(formatContextWindow(1_000_000)).toBe('1M')
+    expect(formatContextWindow(262_144)).toBe('262,144')
+  })
+
+  it('parses custom context window values', () => {
+    expect(parseContextWindow('1M')).toBe(1_000_000)
+    expect(parseContextWindow('256k')).toBe(256_000)
+    expect(parseContextWindow('262144')).toBe(262_144)
+    expect(parseContextWindow('-1')).toBeUndefined()
+    expect(validateContextWindow('1.5M')).toBeUndefined()
+    expect(validateContextWindow('many')).toBeTruthy()
   })
 })

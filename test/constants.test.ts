@@ -35,4 +35,26 @@ describe('token plan model catalog', () => {
       'MiniMax-M2.5',
     ])
   })
+
+  it('stores a context window for every maintained model', () => {
+    expect(Object.fromEntries(
+      TOKEN_PLAN_MODELS.map(model => [model.value, model.contextWindow]),
+    )).toEqual({
+      'glm-5.2': 1_048_576,
+      'qwen3.8-max-preview': 983_616,
+      'qwen3.7-max': 1_000_000,
+      'qwen3.7-plus': 1_000_000,
+      'qwen3.6-plus': 1_000_000,
+      'qwen3.6-flash': 1_000_000,
+      'deepseek-v4-pro': 1_000_000,
+      'deepseek-v4-flash': 1_000_000,
+      'deepseek-v3.2': 131_072,
+      'kimi-k2.7-code': 262_144,
+      'kimi-k2.6': 262_144,
+      'kimi-k2.5': 262_144,
+      'glm-5.1': 202_745,
+      'glm-5': 202_752,
+      'MiniMax-M2.5': 204_800,
+    })
+  })
 })

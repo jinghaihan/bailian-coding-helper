@@ -41,4 +41,37 @@ describe('buildBailianArgs', () => {
       'glm-5.2',
     ])
   })
+
+  it('marks extended Claude Code models with the 1M suffix', () => {
+    expect(buildBailianArgs({
+      agent: 'claude-code',
+      contextWindow: 1_000_000,
+      endpoint: { type: 'region', value: 'cn-beijing' },
+      key: 'sk-example',
+      model: 'glm-5.2',
+    })).toContain('glm-5.2[1m]')
+  })
+
+  it('passes the context window through to OpenClaw', () => {
+    expect(buildBailianArgs({
+      agent: 'openclaw',
+      contextWindow: 262_144,
+      endpoint: { type: 'region', value: 'cn-beijing' },
+      key: 'sk-example',
+      model: 'kimi-k2.7-code',
+    })).toEqual([
+      'config',
+      'agent',
+      '--agent',
+      'openclaw',
+      '--region',
+      'cn-beijing',
+      '--api-key',
+      'sk-example',
+      '--model',
+      'kimi-k2.7-code',
+      '--context-window',
+      '262144',
+    ])
+  })
 })
