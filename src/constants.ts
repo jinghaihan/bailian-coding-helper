@@ -4,7 +4,7 @@ export const NAME = pkg.name
 
 export const VERSION = pkg.version
 
-export const DEFAULT_MODEL = 'qwen3.7-plus'
+export const DEFAULT_MODEL = 'glm-5.2'
 
 export const AGENTS = [
   { value: 'claude-code', label: 'Claude Code' },
